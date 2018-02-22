@@ -17,12 +17,13 @@ class SortableAdsAdmin {
             'srtads_settings',
             ['default' => ['site_domain' => home_url()]]
         );
+        add_settings_section('srtads_default_section', null, null, 'srtads_settings_page');
         add_settings_field(
             'srtads_site_domain_field',
             __('Site Domain', 'srtads'),
             function () { $this->renderField('srtads_site_domain_field', 'site_domain', 'site-domain-field'); },
             'srtads_settings_page',
-            'default',
+            'srtads_default_section',
             ['label_for' => 'srtads_site_domain_field']
         );
     }
@@ -33,7 +34,7 @@ class SortableAdsAdmin {
             __('Sortable Ads', 'srtads'),
             'manage_options',
             'srtads_settings_page',
-            function() { $this->renderPage('srtads_settings_page', 'settings-page'); }
+            function () { $this->renderPage('srtads_settings_page', 'settings-page'); }
         );
     }
 
