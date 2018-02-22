@@ -1,6 +1,10 @@
 <?php
 class SortableAdsAdmin {
-    const SETTINGS_PAGE_VIEW = plugin_dir_path(__FILE__) . 'views/settings-page.php',
+    protected $viewsDir;
+
+    public function __construct() {
+        $this->viewsDir = plugin_dir_path(__FILE__) . 'views/';
+    }
 
     public function run() {
         add_action('admin_init', [$this, 'initSettings']);
@@ -10,27 +14,17 @@ class SortableAdsAdmin {
     public function initSettings() {
         register_setting(
             'srtads',
-            'srtads_options',
-            ['default' => ['srtads_field_site_domain' => home_url()]]
+            'srtads_settings',
+            ['default' => ['site_domain' => home_url()]]
         );
         add_settings_field(
-            'srtads_field_site_domain',
+            'srtads_site_domain_field',
             __('Site Domain', 'srtads'),
-            [$this, 'renderSiteDomainField'],
-            static::SETTINGS_PAGE_VIEW,
+            function () { $this->renderField('srtads_site_domain_field', 'site_domain', 'site-domain-field'); },
+            'srtads_settings_page',
             'default',
-            ['label_for' => 'srtads_field_site_domain']
+            ['label_for' => 'srtads_site_domain_field']
         );
-    }
-
-    public function renderSiteDomainField($args) {
-        $settings = get_option('srtads_options');
-        $key = $args['label_for'];
-        $value = $settings[$key];
-?>
-<input type="text" name="srtads_options[<?= $key ?>]" value="<?= esc_attr($value) ?>"/>
-<p class="description">Sortable uses this domain to identify the site. It may be different from the real domain of the site</p>
-<?php
     }
 
     public function initMenus() {
@@ -38,8 +32,19 @@ class SortableAdsAdmin {
             __('Sortable Ads Settings', 'srtads'),
             __('Sortable Ads', 'srtads'),
             'manage_options',
-            static::SETTINGS_PAGE_VIEW,
-            null
+            'srtads_settings_page',
+            function() { $this->renderPage('srtads_settings_page', 'settings-page'); }
         );
+    }
+
+    public function renderField($id, $name, $view) {
+        $settings = get_option('srtads_settings');
+        $value = $settings[$name];
+        $name = "srtads_settings[$name]";
+        require $this->viewsDir . $view . '.php';
+    }
+
+    public function renderPage($page, $view) {
+        require $this->viewsDir . $view . '.php';
     }
 }
