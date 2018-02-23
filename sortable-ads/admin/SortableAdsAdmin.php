@@ -1,10 +1,6 @@
 <?php
-class SortableAdsAdmin {
-    protected $viewsDir;
-
-    public function __construct() {
-        $this->viewsDir = plugin_dir_path(__FILE__) . 'views/';
-    }
+final class SortableAdsAdmin {
+    const VIEWS_DIR = __DIR__ . '/views/';
 
     public function run() {
         add_action('admin_init', [$this, 'initSettings']);
@@ -17,7 +13,7 @@ class SortableAdsAdmin {
             'srtads_settings',
             [
                 'default' => ['site_domain' => preg_replace('/^http:\\/\\/(www\\.)?/i', '', home_url('', 'http'), 1)],
-                'sanitize_callback' => [$this, 'sanitizeSettings']
+                'sanitize_callback' => __CLASS__ . '::sanitizeSettings'
             ]
         );
         add_settings_section('srtads_default_section', null, null, 'srtads_settings_page');
@@ -44,14 +40,14 @@ class SortableAdsAdmin {
     public function renderSetting($view, $name, array $args = []) {
         $args['name'] = "srtads_settings[$name]";
         $args['value'] = get_option('srtads_settings')[$name];
-        require $this->viewsDir . $view . '.php';
+        require self::VIEWS_DIR . $view . '.php';
     }
 
     public function renderPage($view, array $args = []) {
-        require $this->viewsDir . $view . '.php';
+        require self::VIEWS_DIR . $view . '.php';
     }
 
-    public function sanitizeSettings(array $settings) {
+    public static function sanitizeSettings(array $settings) {
         $output = get_option('srtads_settings');
         $domain = sanitize_text_field($settings['site_domain']);
         if (preg_match('/^[a-z](([-a-z0-9])*[a-z0-9])?(\\.[a-z](([-a-z0-9])*[a-z0-9])?)+$/i', $domain)) {
