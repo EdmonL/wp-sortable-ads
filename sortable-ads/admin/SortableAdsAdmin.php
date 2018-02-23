@@ -24,7 +24,7 @@ class SortableAdsAdmin {
         add_settings_field(
             'srtads_site_domain_field',
             __('Site Domain', 'srtads'),
-            function () { $this->renderField('srtads_site_domain_field', 'site_domain', 'site-domain-field'); },
+            function () { $this->renderSetting('site-domain-field', 'site_domain', ['id' => 'srtads_site_domain_field']); },
             'srtads_settings_page',
             'srtads_default_section',
             ['label_for' => 'srtads_site_domain_field']
@@ -37,18 +37,17 @@ class SortableAdsAdmin {
             __('Sortable Ads', 'srtads'),
             'manage_options',
             'srtads_settings_page',
-            function () { $this->renderPage('srtads_settings_page', 'settings-page'); }
+            function () { $this->renderPage('settings-page', ['page' => 'srtads_settings_page']); }
         );
     }
 
-    public function renderField($id, $name, $view) {
-        $settings = get_option('srtads_settings');
-        $value = $settings[$name];
-        $name = "srtads_settings[$name]";
+    public function renderSetting($view, $name, $args = []) {
+        $args['name'] = "srtads_settings[$name]";
+        $args['value'] = get_option('srtads_settings')[$name];
         require $this->viewsDir . $view . '.php';
     }
 
-    public function renderPage($page, $view) {
+    public function renderPage($view, $args = []) {
         require $this->viewsDir . $view . '.php';
     }
 

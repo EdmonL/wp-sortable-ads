@@ -8,7 +8,7 @@ if (!current_user_can('manage_options')) {
     <form action="options.php" method="post">
 <?php
 settings_fields('srtads');
-do_settings_sections($page);
+do_settings_sections($args['page']);
 submit_button();
 ?>
     </form>
