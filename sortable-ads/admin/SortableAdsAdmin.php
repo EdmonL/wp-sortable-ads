@@ -41,17 +41,17 @@ class SortableAdsAdmin {
         );
     }
 
-    public function renderSetting($view, $name, $args = []) {
+    public function renderSetting($view, $name, array $args = []) {
         $args['name'] = "srtads_settings[$name]";
         $args['value'] = get_option('srtads_settings')[$name];
         require $this->viewsDir . $view . '.php';
     }
 
-    public function renderPage($view, $args = []) {
+    public function renderPage($view, array $args = []) {
         require $this->viewsDir . $view . '.php';
     }
 
-    public function sanitizeSettings($settings) {
+    public function sanitizeSettings(array $settings) {
         $output = get_option('srtads_settings');
         $domain = sanitize_text_field($settings['site_domain']);
         if (preg_match('/^[a-z](([-a-z0-9])*[a-z0-9])?(\\.[a-z](([-a-z0-9])*[a-z0-9])?)+$/i', $domain)) {
