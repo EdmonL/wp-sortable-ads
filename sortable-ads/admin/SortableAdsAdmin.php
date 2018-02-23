@@ -5,6 +5,7 @@ final class SortableAdsAdmin {
     public function run() {
         add_action('admin_init', [$this, 'initSettings']);
         add_action('admin_menu', [$this, 'initMenus']);
+        add_action('admin_enqueue_scripts', [$this, 'loadScripts']);
     }
 
     public function initSettings() {
@@ -25,25 +26,63 @@ final class SortableAdsAdmin {
             'srtads_default_section',
             ['label_for' => 'srtads_site_domain_field']
         );
+
+
+        add_settings_section('srtads_default_section', null, null, 'srtads_ad_tags_page');
+        add_settings_field(
+            'srtads_ad_tag_attributes',
+            __('Attributes', 'srtads'),
+            function () { $this->renderView('ad-tag-attributes'); },
+            'srtads_ad_tags_page',
+            'srtads_default_section'
+        );
     }
 
     public function initMenus() {
-        add_options_page(
-            __('Sortable Ads Settings', 'srtads'),
+        $renderAdTagsPage = function () { $this->renderView('ad-tags-page', ['page' => 'srtads_ad_tags_page']); };
+        $adTagsTitle = __('Sortable Ad Tags', 'srtads');
+        add_menu_page(
+            $adTagsTitle,
             __('Sortable Ads', 'srtads'),
+            'administrator',
+            'srtads_ad_tags_page',
+            $renderAdTagsPage
+        );
+        add_submenu_page(
+            'srtads_ad_tags_page',
+            $adTagsTitle,
+            __('Ad Tags', 'srtads'),
+            'administrator',
+            'srtads_ad_tags_page',
+            $renderAdTagsPage
+        );
+        add_submenu_page(
+            'srtads_ad_tags_page',
+            __('Sortable Ads Settings', 'srtads'),
+            __('Settings', 'srtads'),
             'manage_options',
             'srtads_settings_page',
-            function () { $this->renderPage('settings-page', ['page' => 'srtads_settings_page']); }
+            function () { $this->renderView('settings-page', ['page' => 'srtads_settings_page']); }
         );
+    }
+
+    public function loadScripts($pageHook) {
+        switch ($pageHook) {
+            case 'toplevel_page_srtads_ad_tags_page':
+                wp_enqueue_style('srtads_admin_style', plugins_url('css/style.css', __FILE__));
+                break;
+            default:
+                break;
+        }
     }
 
     public function renderSetting($view, $name, array $args = []) {
         $args['name'] = "srtads_settings[$name]";
         $args['value'] = get_option('srtads_settings')[$name];
-        require self::VIEWS_DIR . $view . '.php';
+        $this->renderView($view, $args);
     }
 
-    public function renderPage($view, array $args = []) {
+    public function renderView($view, array $args = []) {
         require self::VIEWS_DIR . $view . '.php';
     }
 

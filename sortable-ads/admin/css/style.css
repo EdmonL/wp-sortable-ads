@@ -1,0 +1,8 @@
+.srtads label span.ad-tag-attribute {
+  display: inline-block;
+  min-width: 11em;
+}
+
+.srtads select.ad-tag-attribute {
+  min-width: 10.5em;
+}
