@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../includes/SortableAds.php';
+
 final class SortableAdsAdmin {
     const VIEWS_DIR = __DIR__ . '/views/';
 
