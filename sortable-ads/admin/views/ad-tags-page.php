@@ -17,7 +17,7 @@ foreach ($args['ad_tags'] as $tag) {
                     </div>
                 </div>
                 <div class="description">
-                    <?= $tag['type'] ?>:
+                    <?= $tag['format'] ?>:
                     <?= $size ?>
                     <?= $responsiveSizes ?>
                 </div>

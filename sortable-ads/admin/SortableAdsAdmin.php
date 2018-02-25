@@ -78,10 +78,10 @@ final class SortableAdsAdmin {
     public function renderAdTagsPage() {
         require_once __DIR__ . '/../includes/SortableAds.php';
         $adTagList = [];
-        foreach (SortableAds::AD_TAGS as $type => $tags) {
+        foreach (SortableAds::AD_TAGS as $format => $tags) {
             foreach ($tags['names'] as $name) {
                 $tag = [
-                    'type' => $type,
+                    'format' => $format,
                     'name' => $name,
                     'size' => $tags['size']
                 ];
