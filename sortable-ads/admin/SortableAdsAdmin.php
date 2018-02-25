@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../includes/SortableAds.php';
-
 final class SortableAdsAdmin {
     const VIEWS_DIR = __DIR__ . '/views/';
 
@@ -41,14 +39,13 @@ final class SortableAdsAdmin {
     }
 
     public function initMenus() {
-        $renderAdTagsPage = function () { $this->renderView('ad-tags-page', ['page' => 'srtads_ad_tags_page']); };
         $adTagsTitle = __('Sortable Ad Tags', 'srtads');
         add_menu_page(
             $adTagsTitle,
             __('Sortable Ads', 'srtads'),
             'administrator',
             'srtads_ad_tags_page',
-            $renderAdTagsPage
+            [$this, 'renderAdTagsPage']
         );
         add_submenu_page(
             'srtads_ad_tags_page',
@@ -56,7 +53,7 @@ final class SortableAdsAdmin {
             __('Ad Tags', 'srtads'),
             'administrator',
             'srtads_ad_tags_page',
-            $renderAdTagsPage
+            [$this, 'renderAdTagsPage']
         );
         add_submenu_page(
             'srtads_ad_tags_page',
@@ -76,6 +73,25 @@ final class SortableAdsAdmin {
             default:
                 break;
         }
+    }
+
+    public function renderAdTagsPage() {
+        require_once __DIR__ . '/../includes/SortableAds.php';
+        $adTagList = [];
+        foreach (SortableAds::AD_TAGS as $type => $tags) {
+            foreach ($tags['names'] as $name) {
+                $tag = [
+                    'type' => $type,
+                    'name' => $name,
+                    'size' => $tags['size']
+                ];
+                if (isset($tags['responsive_sizes'])) {
+                    $tag['responsive_sizes'] = $tags['responsive_sizes'];
+                }
+                $adTagList[] = $tag;
+            }
+        }
+        $this->renderView('ad-tags-page', ['page' => 'srtads_ad_tags_page', 'ad_tags' => $adTagList]);
     }
 
     public function renderSetting($view, $name, array $args = []) {

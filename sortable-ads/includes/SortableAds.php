@@ -1,5 +1,5 @@
 <?php
-class SortableAds {
+final class SortableAds {
     CONST AD_TAGS = [
         'Banner' => [
             'names' => ['Sortable_Banner1', 'Sortable_Banner2'],
@@ -58,4 +58,12 @@ class SortableAds {
             'size' => [320, 50]
         ]
     ];
+
+    public static function formatSize(array $size) {
+        return "$size[0]x$size[1]";
+    }
+
+    public static function formatSizes(array $sizes) {
+        return join(',', array_map([__CLASS__, 'formatSize'], $sizes));
+    }
 }

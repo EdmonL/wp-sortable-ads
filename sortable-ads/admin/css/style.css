@@ -1,8 +1,39 @@
-.srtads label span.ad-tag-attribute {
+#srt-ad-tag-attributes label span.label {
   display: inline-block;
   min-width: 11em;
 }
 
-.srtads select.ad-tag-attribute {
+#srt-ad-tag-attributes select {
   min-width: 10.5em;
+}
+
+#srt-ad-tags {
+  max-width: 300px;
+}
+
+#srt-ad-tags .menu-item-handle {
+  cursor: pointer;
+}
+
+#srt-ad-tags .menu-item-handle div {
+  cursor: pointer;
+}
+
+#srt-ad-tags .menu-item-handle > .title h3 {
+  margin: 0;
+  padding: 15px;
+  font-size: 1em;
+  line-height: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#srt-ad-tags .tag .description {
+  padding: 10px 15px;
+  font-size: 12px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  color: #666;
 }
