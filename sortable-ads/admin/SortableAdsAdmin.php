@@ -27,7 +27,6 @@ final class SortableAdsAdmin {
             ['label_for' => 'srtads_site_domain_field']
         );
 
-
         add_settings_section('srtads_default_section', null, null, 'srtads_ad_tags_page');
         add_settings_field(
             'srtads_ad_tag_attributes',
@@ -36,16 +35,31 @@ final class SortableAdsAdmin {
             'srtads_ad_tags_page',
             'srtads_default_section'
         );
+        add_settings_field(
+            'srtads_ad_tag_list',
+            __('Ad Tag', 'srtads'),
+            function () { $this->renderView('ad-tag-list', ['ad_tags' => $this->groupedAdTags()]); },
+            'srtads_ad_tags_page',
+            'srtads_default_section'
+        );
     }
 
     public function initMenus() {
+        $renderAdTagsPage = function () {
+            require_once __DIR__ . '/../includes/SortableAds.php';
+            $this->renderView('ad-tags-page', [
+                'page' => 'srtads_ad_tags_page',
+                'site_domain' => get_option('srtads_settings')['site_domain'],
+                'ad_tags' => $this->adTagList()
+            ]);
+        };
         $adTagsTitle = __('Sortable Ad Tags', 'srtads');
         add_menu_page(
             $adTagsTitle,
             __('Sortable Ads', 'srtads'),
             'administrator',
             'srtads_ad_tags_page',
-            [$this, 'renderAdTagsPage']
+            $renderAdTagsPage
         );
         add_submenu_page(
             'srtads_ad_tags_page',
@@ -53,7 +67,7 @@ final class SortableAdsAdmin {
             __('Ad Tags', 'srtads'),
             'administrator',
             'srtads_ad_tags_page',
-            [$this, 'renderAdTagsPage']
+            $renderAdTagsPage
         );
         add_submenu_page(
             'srtads_ad_tags_page',
@@ -68,30 +82,12 @@ final class SortableAdsAdmin {
     public function loadScripts($pageHook) {
         switch ($pageHook) {
             case 'toplevel_page_srtads_ad_tags_page':
+                wp_enqueue_script('jquery');
                 wp_enqueue_style('srtads_admin_style', plugins_url('css/style.css', __FILE__));
                 break;
             default:
                 break;
         }
-    }
-
-    public function renderAdTagsPage() {
-        require_once __DIR__ . '/../includes/SortableAds.php';
-        $adTagList = [];
-        foreach (SortableAds::AD_TAGS as $format => $tags) {
-            foreach ($tags['names'] as $name) {
-                $tag = [
-                    'format' => $format,
-                    'name' => $name,
-                    'size' => $tags['size']
-                ];
-                if (isset($tags['responsive_sizes'])) {
-                    $tag['responsive_sizes'] = $tags['responsive_sizes'];
-                }
-                $adTagList[] = $tag;
-            }
-        }
-        $this->renderView('ad-tags-page', ['page' => 'srtads_ad_tags_page', 'ad_tags' => $adTagList]);
     }
 
     public function renderSetting($view, $name, array $args = []) {
@@ -113,5 +109,43 @@ final class SortableAdsAdmin {
             add_settings_error('srtads_settings', 'invalid_site_domain', __('Please enter a valid site domain.', 'srtads'));
         }
         return $output;
+    }
+
+    public function groupedAdTags() {
+        require_once __DIR__ . '/../includes/SortableAds.php';
+
+        $adTags = [];
+        foreach (SortableAds::AD_TAGS as $format => $tags) {
+            $adTags[self::adTagGroup($format, $tags)] = $tags['names'];
+        }
+        return $adTags;
+    }
+
+    public function adTagList() {
+        require_once __DIR__ . '/../includes/SortableAds.php';
+
+        $adTags = [];
+        foreach (SortableAds::AD_TAGS as $format => $tags) {
+            $group = self::adTagGroup($format, $tags);
+            $size = SortableAds::formatSize($tags['size']);
+            $responsive = isset($tags['responsive_sizes']);
+            foreach ($tags['names'] as $name) {
+                $adTags[$name] = [
+                    'group' => $group,
+                    'size' => $size,
+                    'responsive' => $responsive
+                ];
+            }
+        }
+        return $adTags;
+    }
+
+    private function adTagGroup($format, array $formatData) {
+        require_once __DIR__ . '/../includes/SortableAds.php';
+
+        return "$format - " . SortableAds::formatSize($formatData['size'])
+            . (isset($formatData['responsive_sizes'])
+            ? ' (mobile size ' . SortableAds::formatSizes($formatData['responsive_sizes']) . ')'
+            : '');
     }
 }
