@@ -1,17 +1,14 @@
-#srt_ad_tag_refresh table,
-#srt_ad_tag_refresh tbody,
-#srt_ad_tag_refresh tr {
-  padding: 0;
-  margin: 0;
-  border: none;
-}
-
-#srt_ad_tag_refresh td {
-  padding: 0 1em 0 0;
-  margin: 0;
-  border: none;
+#srt_ad_tag_refresh label span.label {
+  min-width: 11em;
+  display: inline-block;
 }
 
 #srt_ad_tag_refresh select {
   min-width: 10.5em;
+}
+
+#srt_ad_tag_code {
+  margin: 1em;
+  overflow-x: auto;
+  overflow-y: hidden;
 }

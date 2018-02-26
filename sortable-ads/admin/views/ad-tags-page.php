@@ -2,16 +2,18 @@
 $adTags = [];
 foreach ($args['ad_tags'] as $name => $tag) {
     $tag['size'] = esc_attr($tag['size']);
-    $tag['group'] = esc_html_e($tag['group'], 'srtads');
+    $tag['group'] = esc_html(__($tag['group'], 'srtads'));
     $adTags[esc_attr($name)] = $tag;
 }
 $siteDomain = esc_attr(rawurlencode($args['site_domain']));
 ?>
 <div class="wrap srtads">
     <h1><?= esc_html_e(get_admin_page_title(), 'srtads') ?></h1>
-    <?php do_settings_sections($args['page']); ?>
-    <button class="button"><?= esc_html_e('Copy HTML code to clipboard', 'srtads') ?></button>
-    <pre id="srt_ad_tag_code"></pre>
+    <form id="srt_ad_tags_form"><?php do_settings_sections($args['page']); ?></form>
+    <button class="button" style="margin-bottom: 4px">
+        <?= esc_html_e('Copy HTML code to clipboard', 'srtads') ?>
+    </button>
+    <div class="stuffbox"><pre id="srt_ad_tag_code"></pre></div>
 </div>
 <script>
 jQuery(function() {
@@ -53,34 +55,30 @@ jQuery(function() {
         return code + '></div>\n' + scriptsCode;
     }
 
-    function renderCheckbox(id, oldChecked, newChecked) {
-        if (oldChecked !== newChecked) {
-            $('#' + id).prop('checked', Boolean(newChecked));
-        }
-    }
-
-    function renderInput(id, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            $('#' + id).val(newValue);
-        }
-    }
-
     function updateData(data) {
         if (currentData === data) {
             return;
         }
-        renderCheckbox('srt_ad_tag_responsive', currentData['responsive'], data['responsive']);
-        renderCheckbox('srt_ad_tag_sticky', currentData['sticky'], data['sticky']);
-        renderCheckbox('srt_ad_tag_user_refresh', currentData['user_refresh'], data['user_refresh']);
-        renderInput('srt_ad_tag_user_refresh_seconds', currentData['user_refresh_seconds'], data['user_refresh_seconds']);
-        renderCheckbox('srt_ad_tag_event_refresh', currentData['event_refresh'], data['event_refresh']);
-        renderInput('srt_ad_tag_event_refresh_seconds', currentData['event_refresh_seconds'], data['event_refresh_seconds']);
-        renderCheckbox('srt_ad_tag_time_refresh', currentData['time_refresh'], data['time_refresh']);
-        renderInput('srt_ad_tag_time_refresh_seconds', currentData['time_refresh_seconds'], data['time_refresh_seconds']);
+        var $form = $('#srt_ad_tags_form');
+        $('input[name][name!=""][type="checkbox"]').each(function () {
+            var $this = $(this);
+            var name = $this.attr('name');
+            var newChecked = data[name];
+            if (currentData[name] !== newChecked) {
+                $this.prop('checked', Boolean(newChecked));
+            }
+        });
+        $('select[name][name!=""]').each(function () {
+            var $this = $(this);
+            var name = $this.attr('name');
+            var newVal = data[name];
+            if (currentData[name] !== newVal) {
+                $this.val(newVal);
+            }
+        });
         var tagName = data['selected_tag'];
         var tagData = adTags[tagName];
         if (currentData['selected_tag'] !== tagName) {
-            $('#srt_ad_tag_list').val(tagName);
             $('#srt_ad_tag_list_description').text(tagData['group']);
             $('#srt_ad_tag_responsive').prop('disabled', !tagData['responsive']);
         }
@@ -106,9 +104,31 @@ jQuery(function() {
         };
     }
     updateData(initData);
-
-
-  //  $('#srt_ad_tag_list').on('change', function () {
-   // }).change();
+    $('input[name][name!=""][type="checkbox"]').each(function () {
+        var $this = $(this);
+        var name = $this.attr('name');
+        $this.on('change', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var data = $.extend({}, currentData); // always create new objects. Consider them as constant.
+            data[name] = !currentData[name];
+            updateData(data);
+        });
+    });
+    $('select[name][name!=""]').each(function () {
+        var $this = $(this);
+        var name = $this.attr('name');
+        var checkName = $this.data('check');
+        $this.on('change', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var data = $.extend({}, currentData); // always create new objects. Consider them as constant.
+            data[name] = $this.val();
+            if (checkName) {
+                data[checkName] = true;
+            }
+            updateData(data);
+        });
+    });
 });
 </script>
