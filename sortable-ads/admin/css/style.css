@@ -1,8 +1,0 @@
-#srt_ad_tag_attributes label span.label {
-  display: inline-block;
-  min-width: 11em;
-}
-
-#srt_ad_tag_attributes select {
-  min-width: 10.5em;
-}

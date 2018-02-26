@@ -21,7 +21,15 @@ final class SortableAdsAdmin {
         add_settings_field(
             'srtads_site_domain_field',
             __('Site Domain', 'srtads'),
-            function () { $this->renderSetting('site-domain-field', 'site_domain', ['id' => 'srtads_site_domain_field']); },
+            function () {
+                $this->renderView(
+                    'site-domain-field',
+                    [
+                        'name' => 'srtads_settings[site_domain]',
+                        'value' => get_option('srtads_settings')['site_domain']
+                    ]
+                );
+            },
             'srtads_settings_page',
             'srtads_default_section',
             ['label_for' => 'srtads_site_domain_field']
@@ -29,18 +37,36 @@ final class SortableAdsAdmin {
 
         add_settings_section('srtads_default_section', null, null, 'srtads_ad_tags_page');
         add_settings_field(
-            'srtads_ad_tag_attributes',
-            __('Attributes', 'srtads'),
-            function () { $this->renderView('ad-tag-attributes'); },
-            'srtads_ad_tags_page',
-            'srtads_default_section'
-        );
-        add_settings_field(
             'srtads_ad_tag_list',
             __('Ad Tag', 'srtads'),
             function () { $this->renderView('ad-tag-list', ['ad_tags' => $this->groupedAdTags()]); },
             'srtads_ad_tags_page',
-            'srtads_default_section'
+            'srtads_default_section',
+            ['label_for' => 'srt_ad_tag_list']
+        );
+        add_settings_field(
+            'srtads_ad_tag_responsive_attribute',
+            __('Responsive', 'srtads'),
+            function () { $this->renderView('ad-tag-responsive-attribute'); },
+            'srtads_ad_tags_page',
+            'srtads_default_section',
+            ['label_for' => 'srt_ad_tag_responsive']
+        );
+        add_settings_field(
+            'srtads_ad_tag_sticky_attribute',
+            __('Sticky', 'srtads'),
+            function () { $this->renderView('ad-tag-sticky-attribute'); },
+            'srtads_ad_tags_page',
+            'srtads_default_section',
+            ['label_for' => 'srt_ad_tag_sticky']
+        );
+        add_settings_field(
+            'srtads_ad_tag_refresh_attribute',
+            __('Refresh', 'srtads'),
+            function () { $this->renderView('ad-tag-refresh-attribute'); },
+            'srtads_ad_tags_page',
+            'srtads_default_section',
+            ['label_for' => 'srt_ad_tag_refresh']
         );
     }
 
@@ -83,17 +109,11 @@ final class SortableAdsAdmin {
         switch ($pageHook) {
             case 'toplevel_page_srtads_ad_tags_page':
                 wp_enqueue_script('jquery');
-                wp_enqueue_style('srtads_admin_style', plugins_url('css/style.css', __FILE__));
+                wp_enqueue_style('srt_ad_tags_page', plugins_url('css/ad-tags-page.css', __FILE__));
                 break;
             default:
                 break;
         }
-    }
-
-    public function renderSetting($view, $name, array $args = []) {
-        $args['name'] = "srtads_settings[$name]";
-        $args['value'] = get_option('srtads_settings')[$name];
-        $this->renderView($view, $args);
     }
 
     public function renderView($view, array $args = []) {

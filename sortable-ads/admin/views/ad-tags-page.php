@@ -2,14 +2,15 @@
 $adTags = [];
 foreach ($args['ad_tags'] as $name => $tag) {
     $tag['size'] = esc_attr($tag['size']);
+    $tag['group'] = esc_html_e($tag['group'], 'srtads');
     $adTags[esc_attr($name)] = $tag;
 }
 $siteDomain = esc_attr(rawurlencode($args['site_domain']));
 ?>
 <div class="wrap srtads">
-    <h1><?= esc_html(get_admin_page_title()) ?></h1>
+    <h1><?= esc_html_e(get_admin_page_title(), 'srtads') ?></h1>
     <?php do_settings_sections($args['page']); ?>
-    <button class="button">Copy HTML code to clipboard</button>
+    <button class="button"><?= esc_html_e('Copy HTML code to clipboard', 'srtads') ?></button>
     <pre id="srt_ad_tag_code"></pre>
 </div>
 <script>
@@ -68,28 +69,20 @@ jQuery(function() {
         if (currentData === data) {
             return;
         }
-        var responsive = data['responsive'];
-        var tagName = data['selected_tag'];
-        var tagData = adTags[tagName];
-        var currentTagName = currentData['selected_tag'];
-        if (responsive !== currentData['responsive'] || tagName !== currentTagName) {
-            var enabled = tagData['responsive'];
-            $('#srt_ad_tag_responsive').prop({
-                disabled: !enabled,
-                checked: Boolean(enabled && responsive)
-            });
-        }
+        renderCheckbox('srt_ad_tag_responsive', currentData['responsive'], data['responsive']);
         renderCheckbox('srt_ad_tag_sticky', currentData['sticky'], data['sticky']);
         renderCheckbox('srt_ad_tag_user_refresh', currentData['user_refresh'], data['user_refresh']);
         renderInput('srt_ad_tag_user_refresh_seconds', currentData['user_refresh_seconds'], data['user_refresh_seconds']);
-
         renderCheckbox('srt_ad_tag_event_refresh', currentData['event_refresh'], data['event_refresh']);
         renderInput('srt_ad_tag_event_refresh_seconds', currentData['event_refresh_seconds'], data['event_refresh_seconds']);
         renderCheckbox('srt_ad_tag_time_refresh', currentData['time_refresh'], data['time_refresh']);
         renderInput('srt_ad_tag_time_refresh_seconds', currentData['time_refresh_seconds'], data['time_refresh_seconds']);
-        if (currentTagName !== tagName) {
+        var tagName = data['selected_tag'];
+        var tagData = adTags[tagName];
+        if (currentData['selected_tag'] !== tagName) {
             $('#srt_ad_tag_list').val(tagName);
             $('#srt_ad_tag_list_description').text(tagData['group']);
+            $('#srt_ad_tag_responsive').prop('disabled', !tagData['responsive']);
         }
         $('#srt_ad_tag_code').text(tagCode(data));
         currentData = data;
@@ -101,7 +94,7 @@ jQuery(function() {
         initData = JSON.parse(initData);
     } else {
         initData = {
-            'responsive': false,
+            'responsive': true,
             'sticky': false,
             'user_refresh': false,
             'user_refresh_seconds': '60',

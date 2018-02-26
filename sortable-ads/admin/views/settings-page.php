@@ -2,6 +2,7 @@
 if (!current_user_can('manage_options')) {
     exit;
 }
+settings_errors();
 ?>
 <div class="wrap">
     <h1><?= esc_html(get_admin_page_title()) ?></h1>
