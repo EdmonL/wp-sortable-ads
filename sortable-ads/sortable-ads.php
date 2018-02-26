@@ -1,12 +1,10 @@
 <?php
 /*
  * Plugin Name:       Sortable Ads
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       This plugin enables setting up Sortable Ads easily on WordPress sites.
  * Version:           0.0.1
  * Author:            Sortable
  * Author URI:        sortable.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
 // If this file is called directly, abort.
