@@ -94,6 +94,25 @@ final class SortableAdsWidget extends WP_Widget {
         echo '<br/>';
         $this->renderFormSelect('user_refresh', 'User-triggered refresh', $instance);
         echo '</p>';
+        $responsiveTags = array_map(
+            function () { return true; },
+            array_filter(SortableAds::adTagList(), function ($tag) { return $tag['responsive']; })
+        );
+?>
+<script>
+(function () {
+var widgetContentEl = window.document.scripts[window.document.scripts.length - 1].parentElement;
+jQuery(function () {
+    var $ = jQuery;
+    var responsiveTags = <?= json_encode($responsiveTags) ?>;
+    var $responsiveCheckbox = $('input[type=checkbox][name$="[responsive]"]', widgetContentEl);
+    $('select[name$="[ad_tag]"]', widgetContentEl).on('change', function () {
+        $responsiveCheckbox.prop('disabled', !responsiveTags[$(this).val()]);
+    }).change();
+});
+})();
+</script>
+<?php
     }
 
     public function update($newInstance, $oldInstance) {

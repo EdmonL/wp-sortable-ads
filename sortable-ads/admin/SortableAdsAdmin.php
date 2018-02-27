@@ -119,6 +119,9 @@ final class SortableAdsAdmin {
                 wp_enqueue_script('jquery');
                 wp_enqueue_style('srt_ad_tags_page', plugins_url('css/ad-tags-page.css', __FILE__));
                 break;
+            case 'widgets.php':
+                wp_enqueue_script('jquery');
+                break;
             default:
                 break;
         }
