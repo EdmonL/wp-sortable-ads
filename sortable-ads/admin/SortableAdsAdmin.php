@@ -84,7 +84,7 @@ final class SortableAdsAdmin {
         add_menu_page(
             $adTagsTitle,
             __('Sortable Ads', 'srtads'),
-            'administrator',
+            'read',
             'srtads_ad_tags_page',
             $renderAdTagsPage
         );
@@ -92,7 +92,7 @@ final class SortableAdsAdmin {
             'srtads_ad_tags_page',
             $adTagsTitle,
             __('Ad Tags', 'srtads'),
-            'administrator',
+            'read',
             'srtads_ad_tags_page',
             $renderAdTagsPage
         );
@@ -103,6 +103,14 @@ final class SortableAdsAdmin {
             'manage_options',
             'srtads_settings_page',
             function () { $this->renderView('settings-page', ['page' => 'srtads_settings_page']); }
+        );
+        add_submenu_page(
+            'srtads_ad_tags_page',
+            __('Sortable Ads Help', 'srtads'),
+            __('Help', 'srtads'),
+            'read',
+            'srtads_help_page',
+            function () { $this->renderView('help-page'); }
         );
     }
 
