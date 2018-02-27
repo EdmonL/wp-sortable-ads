@@ -2,8 +2,9 @@
 $adTags = [];
 foreach ($args['ad_tags'] as $name => $tag) {
     $tag['size'] = esc_attr($tag['size']);
-    $tag['group'] = esc_html(__($tag['group'], 'srtads'));
-    $adTags[esc_attr($name)] = $tag;
+    $tag['group'] = __($tag['group'], 'srtads');
+    $tag['name'] = esc_attr($name);
+    $adTags[$name] = $tag;
 }
 $siteDomain = esc_attr(rawurlencode($args['site_domain']));
 ?>
@@ -26,7 +27,7 @@ jQuery(function() {
     function tagCode(data) {
         var tagName = data['selected_tag'];
         var tagData = adTags[tagName];
-        var code = '<div class="ad-tag" data-ad-name="' + tagName + '"';
+        var code = '<div class="ad-tag" data-ad-name="' + tagData['name'] + '"';
         if (data['responsive'] && tagData['responsive']) {
             code += ' data-ad-size="auto"';
         } else {

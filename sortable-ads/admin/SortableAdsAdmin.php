@@ -1,4 +1,6 @@
 <?php
+require_once plugin_dir_path(__FILE__) . '../includes/SortableAds.php';
+
 final class SortableAdsAdmin {
     const VIEWS_DIR = __DIR__ . '/views/';
 
@@ -39,7 +41,7 @@ final class SortableAdsAdmin {
         add_settings_field(
             'srtads_ad_tag_list',
             __('Ad Tag', 'srtads'),
-            function () { $this->renderView('ad-tag-list', ['ad_tags' => $this->groupedAdTags()]); },
+            function () { $this->renderView('ad-tag-list', ['ad_tags' => SortableAds::groupedAdTags()]); },
             'srtads_ad_tags_page',
             'srtads_default_section',
             ['label_for' => 'srt_ad_tag_list']
@@ -72,11 +74,10 @@ final class SortableAdsAdmin {
 
     public function initMenus() {
         $renderAdTagsPage = function () {
-            require_once __DIR__ . '/../includes/SortableAds.php';
             $this->renderView('ad-tags-page', [
                 'page' => 'srtads_ad_tags_page',
                 'site_domain' => get_option('srtads_settings')['site_domain'],
-                'ad_tags' => $this->adTagList()
+                'ad_tags' => SortableAds::adTagList()
             ]);
         };
         $adTagsTitle = __('Sortable Ad Tags', 'srtads');
@@ -129,43 +130,5 @@ final class SortableAdsAdmin {
             add_settings_error('srtads_settings', 'invalid_site_domain', __('Please enter a valid site domain.', 'srtads'));
         }
         return $output;
-    }
-
-    public function groupedAdTags() {
-        require_once __DIR__ . '/../includes/SortableAds.php';
-
-        $adTags = [];
-        foreach (SortableAds::AD_TAGS as $format => $tags) {
-            $adTags[self::adTagGroup($format, $tags)] = $tags['names'];
-        }
-        return $adTags;
-    }
-
-    public function adTagList() {
-        require_once __DIR__ . '/../includes/SortableAds.php';
-
-        $adTags = [];
-        foreach (SortableAds::AD_TAGS as $format => $tags) {
-            $group = self::adTagGroup($format, $tags);
-            $size = SortableAds::formatSize($tags['size']);
-            $responsive = isset($tags['responsive_sizes']);
-            foreach ($tags['names'] as $name) {
-                $adTags[$name] = [
-                    'group' => $group,
-                    'size' => $size,
-                    'responsive' => $responsive
-                ];
-            }
-        }
-        return $adTags;
-    }
-
-    private function adTagGroup($format, array $formatData) {
-        require_once __DIR__ . '/../includes/SortableAds.php';
-
-        return "$format - " . SortableAds::formatSize($formatData['size'])
-            . (isset($formatData['responsive_sizes'])
-            ? ' (mobile size ' . SortableAds::formatSizes($formatData['responsive_sizes']) . ')'
-            : '');
     }
 }

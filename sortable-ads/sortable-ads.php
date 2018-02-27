@@ -16,9 +16,8 @@ function run_sortable_ads() {
     if (is_admin()) {
         require_once plugin_dir_path(__FILE__) . 'admin/SortableAdsAdmin.php';
         (new SortableAdsAdmin())->run();
-    } else {
-        //require_once plugin_dir_path(__FILE__) . 'public/SortableAdsPublic.php';
-        //(new SortableAdsPublic())->run();
     }
+    require_once plugin_dir_path(__FILE__) . 'includes/SortableAdsWidget.php';
+    add_action('widgets_init', function() { register_widget('SortableAdsWidget'); });
 }
 run_sortable_ads();
