@@ -15,7 +15,7 @@ class SortableAdsWidget extends WP_Widget {
 
     public function widget($args, $instance) {
         echo $args['before_widget'];
-        $tagName = $instance['ag_tag'];
+        $tagName = $instance['ad_tag'];
         echo '<div class="ad-tag" data-ad-name="' . esc_attr($tagName) . '"';
         if ($instance['responsive']) {
             echo ' data-ad-size="auto"';

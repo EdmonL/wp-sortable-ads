@@ -67,8 +67,7 @@ final class SortableAdsAdmin {
             __('Refresh', 'srtads'),
             function () { $this->renderView('ad-tag-refresh-attribute'); },
             'srtads_ad_tags_page',
-            'srtads_default_section',
-            ['label_for' => 'srt_ad_tag_refresh']
+            'srtads_default_section'
         );
     }
 

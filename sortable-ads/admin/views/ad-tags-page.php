@@ -9,10 +9,10 @@ foreach ($args['ad_tags'] as $name => $tag) {
 $siteDomain = esc_attr(rawurlencode($args['site_domain']));
 ?>
 <div class="wrap srtads">
-    <h1><?= esc_html_e(get_admin_page_title(), 'srtads') ?></h1>
+    <h1><?= esc_html__(get_admin_page_title(), 'srtads') ?></h1>
     <form id="srt_ad_tags_form"><?php do_settings_sections($args['page']); ?></form>
     <button class="button" style="margin-bottom: 4px">
-        <?= esc_html_e('Copy HTML code to clipboard', 'srtads') ?>
+        <?= esc_html__('Copy HTML code to clipboard', 'srtads') ?>
     </button>
     <div class="stuffbox"><pre id="srt_ad_tag_code"></pre></div>
 </div>
@@ -36,20 +36,20 @@ jQuery(function() {
         if (data['sticky']) {
             code += ' data-ad-sticky="sidebar"';
         }
-        var userRefresh = data['user_refresh'];
-        var eventRefresh = data['event_refresh'];
         var timeRefresh = data['time_refresh'];
-        if (userRefresh || eventRefresh || timeRefresh) {
+        var eventRefresh = data['event_refresh'];
+        var userRefresh = data['user_refresh'];
+        if (timeRefresh || eventRefresh || userRefresh) {
             code += ' data-ad-refresh="';
             var refresh = '';
-            if (userRefresh) {
-                refresh += ' user ' + data['user_refresh_seconds'] + 's';
+            if (timeRefresh) {
+                refresh += ' time ' + timeRefresh;
             }
             if (eventRefresh) {
-                refresh += ' event ' + data['event_refresh_seconds'] + 's';
+                refresh += ' event ' + eventRefresh;
             }
-            if (timeRefresh) {
-                refresh += ' time ' + data['time_refresh_seconds'] + 's';
+            if (userRefresh) {
+                refresh += ' user ' + userRefresh;
             }
             code += refresh.trim() + '"';
         }
@@ -95,13 +95,10 @@ jQuery(function() {
         initData = {
             'responsive': true,
             'sticky': false,
-            'user_refresh': false,
-            'user_refresh_seconds': '60',
-            'event_refresh': false,
-            'event_refresh_seconds': '90',
-            'time_refresh': false,
-            'time_refresh_seconds': '360',
-            'selected_tag': 'Sortable_Banner1'
+            'time_refresh': '',
+            'event_refresh': '',
+            'user_refresh': '',
+            'selected_tag': Object.keys(adTags)[0]
         };
     }
     updateData(initData);
@@ -119,15 +116,11 @@ jQuery(function() {
     $('select[name][name!=""]').each(function () {
         var $this = $(this);
         var name = $this.attr('name');
-        var checkName = $this.data('check');
         $this.on('change', function(event) {
             event.preventDefault();
             event.stopPropagation();
             var data = $.extend({}, currentData); // always create new objects. Consider them as constant.
             data[name] = $this.val();
-            if (checkName) {
-                data[checkName] = true;
-            }
             updateData(data);
         });
     });
