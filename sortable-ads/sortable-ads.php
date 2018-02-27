@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       Sortable Ads
  * Description:       This plugin enables setting up Sortable Ads easily on WordPress sites.
- * Version:           0.0.1
+ * Version:           0.1.0
  * Author:            Sortable
  * Author URI:        sortable.com
  */
@@ -11,6 +11,7 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+define('SORTABLE_ADS', true);
 
 function run_sortable_ads() {
     if (is_admin()) {

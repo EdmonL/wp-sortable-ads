@@ -1,3 +1,8 @@
+<?php
+if (!defined('SORTABLE_ADS')) {
+    exit;
+}
+?>
 <div id="srt_ad_tag_refresh">
 
 <label for="srt_ad_tag_time_refresh">

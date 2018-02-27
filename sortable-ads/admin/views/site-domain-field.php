@@ -1,3 +1,8 @@
+<?php
+if (!defined('SORTABLE_ADS')) {
+    exit;
+}
+?>
 <input type="text" class="regular-text ltr" id="srtads_site_domain_field"
        name="<?= esc_attr($args['name']) ?>" value="<?= esc_attr($args['value']) ?>"
        aria-describedby="srtads_site_domain_field_description"/>

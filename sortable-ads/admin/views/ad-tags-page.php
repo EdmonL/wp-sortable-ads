@@ -1,4 +1,8 @@
 <?php
+if (!defined('SORTABLE_ADS')) {
+    exit;
+}
+
 $adTags = [];
 foreach ($args['ad_tags'] as $name => $tag) {
     $tag['size'] = esc_attr($tag['size']);

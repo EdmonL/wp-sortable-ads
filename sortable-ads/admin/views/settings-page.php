@@ -1,5 +1,5 @@
 <?php
-if (!current_user_can('manage_options')) {
+if (!defined('SORTABLE_ADS') || !current_user_can('manage_options')) {
     exit;
 }
 settings_errors();

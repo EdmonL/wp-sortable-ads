@@ -1,4 +1,8 @@
 <?php
+if (!defined('SORTABLE_ADS')) {
+    exit;
+}
+
 echo '<select id="' . esc_attr($args['id']) . '" name="' . esc_attr($args['name']) . '"';
 if (!empty($args['class'])) {
     echo ' class="' . esc_attr($args['class']) . '"';
