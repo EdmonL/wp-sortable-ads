@@ -15,10 +15,12 @@ $siteDomain = esc_attr(rawurlencode($args['site_domain']));
 <div class="wrap srtads">
     <h1><?= esc_html__(get_admin_page_title(), 'srtads') ?></h1>
     <form id="srt_ad_tags_form"><?php do_settings_sections($args['page']); ?></form>
-    <button class="button" style="margin-bottom: 4px">
+    <button id="srtads_copy_tag_html_code" class="button" style="margin-bottom: 4px; min-width: 16em">
         <?= esc_html__('Copy HTML code to clipboard', 'srtads') ?>
     </button>
-    <div class="stuffbox"><pre id="srt_ad_tag_code"></pre></div>
+    <div class="stuffbox">
+        <pre id="srt_ad_tag_code" style="margin: 1em; overflow-x: auto; overflow-y: hidden"></pre>
+    </div>
 </div>
 <script>
 jQuery(function() {
@@ -128,5 +130,24 @@ jQuery(function() {
             updateData(data);
         });
     });
+    var $copyButton = $('#srtads_copy_tag_html_code');
+    var copyHTMLcode = (function() {
+        var timer = null;
+        var text = $copyButton.text();
+        return function () {
+            var range = window.document.createRange();
+            range.selectNodeContents(window.document.getElementById('srt_ad_tag_code'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            window.document.execCommand('copy');
+            if (timer) {
+                window.clearTimeout(timer);
+            } else {
+                $copyButton.text('Copied!');
+            }
+            timer = window.setTimeout(function() { $copyButton.text(text); timer = null; }, 1000);
+        };
+    })();
+    $copyButton.on('click', copyHTMLcode);
 });
 </script>

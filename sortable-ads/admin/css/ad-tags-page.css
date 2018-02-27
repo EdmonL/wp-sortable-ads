@@ -6,9 +6,3 @@
 #srt_ad_tag_refresh select {
   min-width: 10.5em;
 }
-
-#srt_ad_tag_code {
-  margin: 1em;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
