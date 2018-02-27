@@ -1,7 +1,33 @@
 <?php
 require_once plugin_dir_path(__FILE__) . 'SortableAds.php';
 
-class SortableAdsWidget extends WP_Widget {
+final class SortableAdsWidget extends WP_Widget {
+    const REFRESH_OPTIONS = [
+        'time_refresh' => [
+            '' => 'none',
+            '30s' => 'every 30s',
+            '60s' => 'every 60s',
+            '90s' => 'every 90s',
+            '120s' => 'every 120s',
+            '180s' => 'every 180s',
+            '240s' => 'every 240s',
+            '300s' => 'every 300s',
+            '360s' => 'every 360s'
+        ],
+        'event_refresh' => [
+            '' => 'none',
+            '30s' => 'every 30s',
+            '60s' => 'every 60s',
+            '90s' => 'every 90s'
+        ],
+        'user_refresh' => [
+            '' => 'none',
+            '0s' => 'any time',
+            '30s' => 'every 30s',
+            '60s' => 'every 60s'
+        ]
+    ];
+
     public function __construct() {
         parent::__construct(
             'srtads',
@@ -25,22 +51,21 @@ class SortableAdsWidget extends WP_Widget {
         if ($instance['sticky']) {
             echo ' data-ad-sticky="sidebar"';
         }
-        $userRefresh = $instance['user_refresh'];
-        $eventRefresh = $instance['event_refresh'];
         $timeRefresh = $instance['time_refresh'];
-        if ($userRefresh || $eventRefresh || $timeRefresh) {
-            echo ' data-ad-refresh="';
+        $eventRefresh = $instance['event_refresh'];
+        $userRefresh = $instance['user_refresh'];
+        if ($timeRefresh || $eventRefresh || $userRefresh) {
             $refresh = '';
-            if ($userRefresh) {
-                $refresh .= " user $instance[user_refresh_seconds]s";
+            if ($timeRefresh) {
+                $refresh .= " time $timeRefresh";
             }
             if ($eventRefresh) {
-                $refresh .= " event $instance[event_refresh_seconds]s";
+                $refresh .= " event $eventRefresh";
             }
-            if ($timeRefresh) {
-                $refresh .= " time $instance[time_refresh_seconds]s";
+            if ($userRefresh) {
+                $refresh .= " user $userRefresh";
             }
-            echo trim($refresh) . '"';
+            echo ' data-ad-refresh="' . trim($refresh) . '"';
         }
         echo '></div><script src="//tags-cdn.deployads.com/a/'
             . esc_attr(rawurlencode(get_option('srtads_settings')['site_domain']))
@@ -58,13 +83,17 @@ class SortableAdsWidget extends WP_Widget {
             'value' => empty($instance['ad_tag']) ? null : $instance['ad_tag']
         ];
         require plugin_dir_path(__FILE__) . 'views/ad-tag-select.php';
-        echo '</p><p><label><input type="checkbox" class="checkbox" id="'
-            . esc_attr($this->get_field_id('responsive')) . '" name="'
-            . esc_attr($this->get_field_name('responsive')) . '"';
-        if (!empty($instance['responsive'])) {
-            echo " checked";
-        }
-        echo '/>' . esc_html__('Responsive if available', 'srtads') . '</label></p>';
+        echo '</p><p>';
+        $this->renderFormCheckbox('responsive', 'Responsive if available', $instance);
+        echo '<br/>';
+        $this->renderFormCheckbox('sticky', 'Sticky to sidebar', $instance);
+        echo '</p><p>';
+        $this->renderFormSelect('time_refresh', 'Timer-triggered refresh', $instance);
+        echo '<br/>';
+        $this->renderFormSelect('event_refresh', 'Event-triggered refresh', $instance);
+        echo '<br/>';
+        $this->renderFormSelect('user_refresh', 'User-triggered refresh', $instance);
+        echo '</p>';
     }
 
     public function update($newInstance, $oldInstance) {
@@ -80,18 +109,44 @@ class SortableAdsWidget extends WP_Widget {
         $tag = $adTags[$tagName];
         $newInstance['responsive'] = !empty($newInstance['responsive']) && $tag['responsive'];
         $newInstance['sticky'] = !empty($newInstance['sticky']);
-        $newInstance['user_refresh'] = !empty($newInstance['user_refresh']);
-        if (!isset($newInstance['user_refresh_seconds'])) {
-            $newInstance['user_refresh_seconds'] = '60';
-        }
-        $newInstance['event_refresh'] = !empty($newInstance['event_refresh']);
-        if (!isset($newInstance['event_refresh_seconds'])) {
-            $newInstance['event_refresh_seconds'] = '90';
-        }
-        $newInstance['time_refresh'] = !empty($newInstance['time_refresh']);
-        if (!isset($newInstance['time_refresh_seconds'])) {
-            $newInstance['time_refresh_seconds'] = '360';
+        foreach (array_keys(self::REFRESH_OPTIONS) as $field) {
+            $newInstance = self::sanitizeRefresh($field, $newInstance);
         }
         return $newInstance;
+    }
+
+    private function renderFormSelect($field, $label, $instance) {
+        $value = $instance[$field];
+        $id = esc_attr($this->get_field_id($field));
+        echo '<label for="' . $id . '" style="min-width: 11em; display: inline-block">'
+            . esc_html__($label, 'srtads')
+            . '</label><select id="' . $id . '" name="' . esc_attr($this->get_field_name($field))
+            . '" style="min-width: 7em">';
+        foreach (self::REFRESH_OPTIONS[$field] as $optVal => $label) {
+            echo '<option value="' . esc_attr($optVal) . '"';
+            if ($value === $optVal) {
+                echo ' selected';
+            }
+            echo '>' . esc_html__($label, 'srtads') . '</option>';
+        }
+        echo '</select>';
+    }
+
+    private function renderFormCheckbox($field, $label, $instance) {
+        echo '<label><input type="checkbox" class="checkbox" id="'
+            . esc_attr($this->get_field_id($field)) . '" name="'
+            . esc_attr($this->get_field_name($field)) . '"';
+        if (!empty($instance[$field])) {
+            echo " checked";
+        }
+        echo '/>' . esc_html__($label, 'srtads') . '</label>';
+    }
+
+    private static function sanitizeRefresh($field, $instance) {
+        $options = self::REFRESH_OPTIONS[$field];
+        if (empty($instance[$field]) || !isset($options[$instance[$field]])) {
+            $instance[$field] = '';
+        }
+        return $instance;
     }
 }
