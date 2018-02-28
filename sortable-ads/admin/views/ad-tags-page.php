@@ -84,7 +84,7 @@ jQuery(function() {
                 $this.prop('checked', Boolean(newChecked));
             }
         });
-        $('select[name][name!=""],input[name][name=""]', $form).each(function () {
+        $('select[name][name!=""],input[name][name!=""]', $form).each(function () {
             var $this = $(this);
             var name = $this.attr('name');
             var newVal = data[name];
