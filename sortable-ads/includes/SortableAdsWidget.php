@@ -96,12 +96,9 @@ final class SortableAdsWidget extends WP_Widget {
         echo '<br/>';
         $this->renderFormSelect('user_refresh', 'User-triggered refresh', $instance);
         echo '</p><p>';
-        $this->renderFormCheckbox('sticky', 'Sticky', $instance);
+        $this->renderFormCheckbox('sticky', 'Sticky with', $instance);
         $id = esc_attr($this->get_field_id('sticky_top_padding'));
-        echo " <label for=\"$id\">";
-        esc_html_e('with', 'srtads');
-        echo '</label> ';
-        echo "<input id=\"$id\" type=\"number\" class=\"small-text srtads-validate\" name=\""
+        echo " <input id=\"$id\" type=\"number\" class=\"small-text srtads-validate\" name=\""
             . esc_attr($this->get_field_name('sticky_top_padding'))
             . '" step="1" min="0" value="';
         echo empty($instance['sticky_top_padding']) ? 0 : $instance['sticky_top_padding'];
