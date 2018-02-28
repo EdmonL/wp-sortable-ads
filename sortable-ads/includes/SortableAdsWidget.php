@@ -85,14 +85,14 @@ final class SortableAdsWidget extends WP_Widget {
         require plugin_dir_path(__FILE__) . 'views/ad-tag-select.php';
         echo '</p><p>';
         $this->renderFormCheckbox('responsive', 'Responsive if available', $instance);
-        echo '<br/>';
-        $this->renderFormCheckbox('sticky', 'Sticky to sidebar', $instance);
         echo '</p><p>';
         $this->renderFormSelect('time_refresh', 'Timer-triggered refresh', $instance);
         echo '<br/>';
         $this->renderFormSelect('event_refresh', 'Event-triggered refresh', $instance);
         echo '<br/>';
         $this->renderFormSelect('user_refresh', 'User-triggered refresh', $instance);
+        echo '</p><p>';
+        $this->renderFormCheckbox('sticky', 'Sticky to sidebar', $instance);
         echo '</p>';
         $responsiveTags = array_map(
             function () { return true; },
