@@ -114,7 +114,7 @@ jQuery(function() {
             'event_refresh': '',
             'user_refresh': '',
             'sticky': false,
-            'sticky_top_padding': ''
+            'sticky_top_padding': '0'
         };
     }
     updateData(initData);
