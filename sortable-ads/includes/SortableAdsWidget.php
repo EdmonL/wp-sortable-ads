@@ -33,7 +33,7 @@ final class SortableAdsWidget extends WP_Widget {
             'srtads',
             __('Sortable Ad', 'srtads'),
             [
-                'description' => __('Displays a Sortable Ad.'),
+                'description' => __('Displays a Sortable Ad.', 'srtads'),
                 'customize_selective_refresh' => true
             ]
         );
@@ -47,9 +47,6 @@ final class SortableAdsWidget extends WP_Widget {
             echo ' data-ad-size="auto"';
         } else {
             echo ' data-ad-size="' . esc_attr(SortableAds::adTagList()[$tagName]['size']) . '"';
-        }
-        if ($instance['sticky']) {
-            echo ' data-ad-sticky="sidebar"';
         }
         $timeRefresh = $instance['time_refresh'];
         $eventRefresh = $instance['event_refresh'];
@@ -66,6 +63,13 @@ final class SortableAdsWidget extends WP_Widget {
                 $refresh .= " user $userRefresh";
             }
             echo ' data-ad-refresh="' . trim($refresh) . '"';
+        }
+        if ($instance['sticky']) {
+            echo ' data-ad-sticky="sidebar';
+            if ($instance['sticky_top_padding']) {
+                echo " $instance[sticky_top_padding]px";
+            }
+            echo '"';
         }
         echo '></div><script src="//tags-cdn.deployads.com/a/'
             . esc_attr(rawurlencode(get_option('srtads_settings')['site_domain']))
@@ -92,7 +96,19 @@ final class SortableAdsWidget extends WP_Widget {
         echo '<br/>';
         $this->renderFormSelect('user_refresh', 'User-triggered refresh', $instance);
         echo '</p><p>';
-        $this->renderFormCheckbox('sticky', 'Sticky to sidebar', $instance);
+        $this->renderFormCheckbox('sticky', 'Sticky', $instance);
+        $id = esc_attr($this->get_field_id('sticky_top_padding'));
+        echo " <label for=\"$id\">";
+        esc_html_e('with', 'srtads');
+        echo '</label> ';
+        echo "<input id=\"$id\" type=\"number\" class=\"small-text srtads-validate\" name=\""
+            . esc_attr($this->get_field_name('sticky_top_padding'))
+            . '" step="1" min="0" value="';
+        echo empty($instance['sticky_top_padding']) ? 0 : $instance['sticky_top_padding'];
+        echo '"/>';
+        echo " <label for=\"$id\">";
+        esc_html_e('px top padding', 'srtads');
+        echo '</label>';
         echo '</p>';
         $responsiveTags = array_map(
             function () { return true; },
@@ -109,6 +125,10 @@ jQuery(function () {
     $('select[name$="[ad_tag]"]', widgetContentEl).on('change', function () {
         $responsiveCheckbox.prop('disabled', !responsiveTags[$(this).val()]);
     }).change();
+    var $stickyCheckbox = $('input[type=checkbox][name$="[sticky]"]', widgetContentEl);
+    $('input[name$="[sticky_top_padding]"]', widgetContentEl).on('input', function () {
+        $stickyCheckbox.prop('checked', true);
+    });
 });
 })();
 </script>
@@ -127,9 +147,14 @@ jQuery(function () {
         $newInstance['ad_tag'] = $tagName;
         $tag = $adTags[$tagName];
         $newInstance['responsive'] = !empty($newInstance['responsive']) && $tag['responsive'];
-        $newInstance['sticky'] = !empty($newInstance['sticky']);
         foreach (array_keys(self::REFRESH_OPTIONS) as $field) {
             $newInstance = self::sanitizeRefresh($field, $newInstance);
+        }
+        $newInstance['sticky'] = !empty($newInstance['sticky']);
+        if (empty($newInstance['sticky_top_padding'])) {
+            $newInstance['sticky_top_padding'] = 0;
+        } else {
+            $newInstance['sticky_top_padding'] = max(0, intval($newInstance['sticky_top_padding']));
         }
         return $newInstance;
     }

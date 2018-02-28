@@ -30,6 +30,7 @@ jQuery(function() {
                       '<script>(deployads = window.deployads || []).push({});</' + 'script>';
     var adTags = <?= json_encode($adTags) ?>;
     var $form = $('#srt_ad_tags_form');
+    $form.on('submit', function (event) { event.preventDefault(); event.stopPropagation(); });
 
     function tagCode(data) {
         var tagName = data['selected_tag'];
@@ -143,7 +144,7 @@ jQuery(function() {
         var $this = $(this);
         var name = $this.attr('name');
         var checkName = $this.data('check');
-        $this.on('change', function(event) {
+        $this.on('input', function(event) {
             event.preventDefault();
             event.stopPropagation();
             var data = $.extend({}, currentData); // always create new objects. Consider them as constant.
