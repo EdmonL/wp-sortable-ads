@@ -135,7 +135,7 @@ final class SortableAdsAdmin {
     public static function sanitizeSettings(array $settings) {
         $output = get_option('srtads_settings');
         $domain = sanitize_text_field($settings['site_domain']);
-        if (preg_match('/^[a-z](([-a-z0-9])*[a-z0-9])?(\\.[a-z](([-a-z0-9])*[a-z0-9])?)+$/i', $domain)) {
+        if (preg_match('/^[a-z]([-a-z0-9]*[a-z0-9])?(\\.[a-z]([-a-z0-9]*[a-z0-9])?)+$/i', $domain)) {
             $output['site_domain'] = $domain;
         } else {
             add_settings_error('srtads_settings', 'invalid_site_domain', __('Please enter a valid site domain.', 'srtads'));
