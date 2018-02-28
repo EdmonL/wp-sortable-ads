@@ -29,6 +29,7 @@ jQuery(function() {
     var scriptsCode = '<script src="//tags-cdn.deployads.com/a/<?= $siteDomain ?>.js" async></' + 'script>\n' +
                       '<script>(deployads = window.deployads || []).push({});</' + 'script>';
     var adTags = <?= json_encode($adTags) ?>;
+    var $form = $('#srt_ad_tags_form');
 
     function tagCode(data) {
         var tagName = data['selected_tag'];
@@ -38,9 +39,6 @@ jQuery(function() {
             code += ' data-ad-size="auto"';
         } else {
             code += ' data-ad-size="' + tagData['size'] + '"';
-        }
-        if (data['sticky']) {
-            code += ' data-ad-sticky="sidebar"';
         }
         var timeRefresh = data['time_refresh'];
         var eventRefresh = data['event_refresh'];
@@ -59,6 +57,17 @@ jQuery(function() {
             }
             code += refresh.trim() + '"';
         }
+        if (data['sticky']) {
+            code += ' data-ad-sticky="sidebar';
+            var padding = data['sticky_top_padding'];
+            if (padding.valid) {
+                padding = Number(padding);
+                if (padding) {
+                    code += ' ' + padding + 'px'
+                }
+            }
+            code += '"';
+        }
         return code + '></div>\n' + scriptsCode;
     }
 
@@ -66,8 +75,7 @@ jQuery(function() {
         if (currentData === data) {
             return;
         }
-        var $form = $('#srt_ad_tags_form');
-        $('input[name][name!=""][type="checkbox"]').each(function () {
+        $('input[name][name!=""][type="checkbox"]', $form).each(function () {
             var $this = $(this);
             var name = $this.attr('name');
             var newChecked = data[name];
@@ -75,7 +83,7 @@ jQuery(function() {
                 $this.prop('checked', Boolean(newChecked));
             }
         });
-        $('select[name][name!=""]').each(function () {
+        $('select[name][name!=""],input[name][name=""]', $form).each(function () {
             var $this = $(this);
             var name = $this.attr('name');
             var newVal = data[name];
@@ -99,16 +107,17 @@ jQuery(function() {
         initData = JSON.parse(initData);
     } else {
         initData = {
+            'selected_tag': Object.keys(adTags)[0],
             'responsive': true,
-            'sticky': false,
             'time_refresh': '',
             'event_refresh': '',
             'user_refresh': '',
-            'selected_tag': Object.keys(adTags)[0]
+            'sticky': false,
+            'sticky_top_padding': ''
         };
     }
     updateData(initData);
-    $('input[name][name!=""][type="checkbox"]').each(function () {
+    $('input[name][name!=""][type="checkbox"]', $form).each(function () {
         var $this = $(this);
         var name = $this.attr('name');
         $this.on('change', function(event) {
@@ -119,7 +128,7 @@ jQuery(function() {
             updateData(data);
         });
     });
-    $('select[name][name!=""]').each(function () {
+    $('select[name][name!=""]', $form).each(function () {
         var $this = $(this);
         var name = $this.attr('name');
         $this.on('change', function(event) {
@@ -127,6 +136,22 @@ jQuery(function() {
             event.stopPropagation();
             var data = $.extend({}, currentData); // always create new objects. Consider them as constant.
             data[name] = $this.val();
+            updateData(data);
+        });
+    });
+    $('input.srtads-validate[name][name!=""]', $form).each(function () {
+        var $this = $(this);
+        var name = $this.attr('name');
+        var checkName = $this.data('check');
+        $this.on('change', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var data = $.extend({}, currentData); // always create new objects. Consider them as constant.
+            data[name] = new String($this.val());
+            data[name]['valid'] = this.validity.valid;
+            if (checkName && !data[checkName]) {
+                data[checkName] = true;
+            }
             updateData(data);
         });
     });

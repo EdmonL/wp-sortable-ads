@@ -2,42 +2,43 @@
 if (!defined('SORTABLE_ADS')) {
     exit;
 }
-?>
-<div id="srt_ad_tag_refresh">
 
-<label for="srt_ad_tag_time_refresh">
-    <?= esc_html__('Timer-triggered refresh', 'srtads') ?>
-</label>
-<select id="srt_ad_tag_time_refresh" name="time_refresh">
-    <option value=""><?= esc_html__('none', 'srtads') ?></option>
-    <option value="30s"><?= esc_html__('every 30 seconds', 'srtads') ?></option>
-    <option value="60s"><?= esc_html__('every 60 seconds', 'srtads') ?></option>
-    <option value="90s"><?= esc_html__('every 90 seconds', 'srtads') ?></option>
-    <option value="120s"><?= esc_html__('every 120 seconds', 'srtads') ?></option>
-    <option value="180s"><?= esc_html__('every 180 seconds', 'srtads') ?></option>
-    <option value="240s"><?= esc_html__('every 240 seconds', 'srtads') ?></option>
-    <option value="300s"><?= esc_html__('every 300 seconds', 'srtads') ?></option>
-    <option value="360s"><?= esc_html__('every 360 seconds', 'srtads') ?></option>
-</select>
-<br/>
-<label for="srt_ad_tag_event_refresh">
-    <?= esc_html__('Event-triggered refresh', 'srtads') ?>
-</label>
-<select id="srt_ad_tag_event_refresh" name="event_refresh">
-    <option value=""><?= esc_html__('none', 'srtads') ?></option>
-    <option value="30s"><?= esc_html__('every 30 seconds', 'srtads') ?></option>
-    <option value="60s"><?= esc_html__('every 60 seconds', 'srtads') ?></option>
-    <option value="90s"><?= esc_html__('every 90 seconds', 'srtads') ?></option>
-</select>
-<br/>
-<label for="srt_ad_tag_user_refresh">
-    <?= esc_html__('User-triggered refresh', 'srtads') ?>
-</label>
-<select id="srt_ad_tag_user_refresh" name="user_refresh">
-    <option value=""><?= esc_html__('none', 'srtads') ?></option>
-    <option value="0s"><?= esc_html__('any time', 'srtads') ?></option>
-    <option value="30s"><?= esc_html__('every 30 seconds', 'srtads') ?></option>
-    <option value="60s"><?= esc_html__('every 60 seconds', 'srtads') ?></option>
-</select>
+function renderSelect($name, $label, array $options) {
+    $id = "srt_ad_tag_$name";
+    echo "<label for=\"$id\" style=\"min-width: 11em; display: inline-block\">";
+    esc_html_e($label, 'srtads');
+    echo '</label>';
+    echo "<select id=\"$id\" name=\"$name\" style=\"min-width: 10.5em\">";
+    foreach ($options as $value => $option) {
+        echo "<option value=\"$value\">";
+        esc_html_e($option, 'srtads');
+        echo '</option>';
+    }
+    echo '</select>';
+}
 
-</div>
+renderSelect('time_refresh', 'Timer-triggered refresh', [
+    '' => 'none',
+    '30s' => 'every 30 seconds',
+    '60s' => 'every 60 seconds',
+    '90s' => 'every 90 seconds',
+    '120s' => 'every 120 seconds',
+    '180s' => 'every 180 seconds',
+    '240s' => 'every 240 seconds',
+    '300s' => 'every 300 seconds',
+    '360s' => 'every 360 seconds'
+]);
+echo '<br/>';
+renderSelect('event_refresh', 'Event-triggered refresh', [
+    '' => 'none',
+    '30s' => 'every 30 seconds',
+    '60s' => 'every 60 seconds',
+    '90s' => 'every 90 seconds'
+]);
+echo '<br/>';
+renderSelect('user_refresh', 'User-triggered refresh', [
+    '' => 'none',
+    '0s' => 'any time',
+    '30s' => 'every 30 seconds',
+    '60s' => 'every 60 seconds'
+]);

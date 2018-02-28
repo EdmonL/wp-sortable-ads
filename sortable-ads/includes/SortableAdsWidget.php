@@ -137,28 +137,33 @@ jQuery(function () {
     private function renderFormSelect($field, $label, $instance) {
         $value = $instance[$field];
         $id = esc_attr($this->get_field_id($field));
-        echo '<label for="' . $id . '" style="min-width: 11em; display: inline-block">'
-            . esc_html__($label, 'srtads')
-            . '</label><select id="' . $id . '" name="' . esc_attr($this->get_field_name($field))
-            . '" style="min-width: 7em">';
+        echo "<label for=\"$id\" style=\"min-width: 11em; display: inline-block\">";
+        esc_html_e($label, 'srtads');
+        echo '</label>';
+        echo "<select id=\"$id\" name=\"" . esc_attr($this->get_field_name($field)) . '" style="min-width: 7em">';
         foreach (self::REFRESH_OPTIONS[$field] as $optVal => $label) {
-            echo '<option value="' . esc_attr($optVal) . '"';
+            echo "<option value=\"$optVal\"";
             if ($value === $optVal) {
                 echo ' selected';
             }
-            echo '>' . esc_html__($label, 'srtads') . '</option>';
+            echo '>';
+            esc_html_e($label, 'srtads');
+            echo '</option>';
         }
         echo '</select>';
     }
 
     private function renderFormCheckbox($field, $label, $instance) {
-        echo '<label><input type="checkbox" class="checkbox" id="'
-            . esc_attr($this->get_field_id($field)) . '" name="'
-            . esc_attr($this->get_field_name($field)) . '"';
+        echo '<label>';
+        echo '<input type="checkbox" class="checkbox"';
+        echo ' id="' . esc_attr($this->get_field_id($field)) . '"';
+        echo ' name="' . esc_attr($this->get_field_name($field)) . '"';
         if (!empty($instance[$field])) {
             echo " checked";
         }
-        echo '/>' . esc_html__($label, 'srtads') . '</label>';
+        echo '/>';
+        esc_html_e($label, 'srtads');
+        echo '</label>';
     }
 
     private static function sanitizeRefresh($field, $instance) {

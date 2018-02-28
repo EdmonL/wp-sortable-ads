@@ -55,19 +55,19 @@ final class SortableAdsAdmin {
             ['label_for' => 'srt_ad_tag_responsive']
         );
         add_settings_field(
-            'srtads_ad_tag_sticky_attribute',
-            __('Sticky', 'srtads'),
-            function () { $this->renderView('ad-tag-sticky-attribute'); },
-            'srtads_ad_tags_page',
-            'srtads_default_section',
-            ['label_for' => 'srt_ad_tag_sticky']
-        );
-        add_settings_field(
             'srtads_ad_tag_refresh_attribute',
             __('Refresh', 'srtads'),
             function () { $this->renderView('ad-tag-refresh-attribute'); },
             'srtads_ad_tags_page',
             'srtads_default_section'
+        );
+        add_settings_field(
+            'srtads_ad_tag_sticky_attribute',
+            __('Siderbar Sticky', 'srtads'),
+            function () { $this->renderView('ad-tag-sticky-attribute'); },
+            'srtads_ad_tags_page',
+            'srtads_default_section',
+            ['label_for' => 'srt_ad_tag_sticky']
         );
     }
 
@@ -116,13 +116,14 @@ final class SortableAdsAdmin {
     public function loadScripts($pageHook) {
         switch ($pageHook) {
             case 'toplevel_page_srtads_ad_tags_page':
-                wp_enqueue_script('jquery');
-                wp_enqueue_style('srt_ad_tags_page', plugins_url('css/ad-tags-page.css', __FILE__));
-                break;
             case 'widgets.php':
+                wp_enqueue_style('srtads_style', plugins_url('css/style.css', __FILE__));
                 wp_enqueue_script('jquery');
                 break;
+            case 'sortable-ads_page_srtads_settings_page':
+                wp_enqueue_style('srtads_style', plugins_url('css/style.css', __FILE__));
             default:
+                echo '<script>console.log("' . $pageHook . '")</script>';
                 break;
         }
     }

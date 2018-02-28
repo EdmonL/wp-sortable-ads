@@ -1,0 +1,7 @@
+input.srtads-validate:invalid {
+  border-color: #a94442;
+}
+
+input.srtads-validate:invalid:focus {
+  box-shadow: 0 0 2px rgba(206,132,131,.8);
+}

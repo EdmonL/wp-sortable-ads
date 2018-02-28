@@ -12,9 +12,13 @@ $value = empty($args['value']) ? null : $args['value'];
 foreach ($args['ad_tags'] as $group => $tags) {
     echo '<optgroup label="' . esc_attr__($group, 'srtads') . '">';
     foreach ($tags as $tag) {
-        echo '<option value="' . esc_attr($tag) . '"'
-            . ($tag === $value ? ' selected' : '')
-            . '>' . esc_html__($tag, 'srtads') . '</option>';
+        echo '<option value="' . esc_attr($tag) . '"';
+        if ($tag === $value) {
+           echo ' selected';
+        }
+        echo '>';
+        esc_html_e($tag, 'srtads');
+        echo '</option>';
     }
     echo '</optgroup>';
 }
