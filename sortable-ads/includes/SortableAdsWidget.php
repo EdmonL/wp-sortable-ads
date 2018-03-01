@@ -30,10 +30,10 @@ final class SortableAdsWidget extends WP_Widget {
 
     public function __construct() {
         parent::__construct(
-            'srtads',
-            __('Sortable Ad', 'srtads'),
+            'sortable-ads',
+            __('Sortable Ad', 'sortable-ads'),
             [
-                'description' => __('Displays a Sortable Ad.', 'srtads'),
+                'description' => __('Using this widget doesn\'t require copying and pasting of code. Note ads must fit within the widgetized area to avoid layout issues.', 'sortable-ads'),
                 'customize_selective_refresh' => true
             ]
         );
@@ -64,13 +64,6 @@ final class SortableAdsWidget extends WP_Widget {
             }
             echo ' data-ad-refresh="' . trim($refresh) . '"';
         }
-        if ($instance['sticky']) {
-            echo ' data-ad-sticky="sidebar';
-            if ($instance['sticky_top_padding']) {
-                echo " $instance[sticky_top_padding]px";
-            }
-            echo '"';
-        }
         echo '></div><script src="//tags-cdn.deployads.com/a/'
             . esc_attr(rawurlencode(get_option('srtads_settings')['site_domain']))
             . '.js" async></script><script>(deployads = window.deployads || []).push({});</script>';
@@ -95,17 +88,6 @@ final class SortableAdsWidget extends WP_Widget {
         $this->renderFormSelect('event_refresh', 'Event-triggered refresh', $instance);
         echo '<br/>';
         $this->renderFormSelect('user_refresh', 'User-triggered refresh', $instance);
-        echo '</p><p>';
-        $this->renderFormCheckbox('sticky', 'Sticky with', $instance);
-        $id = esc_attr($this->get_field_id('sticky_top_padding'));
-        echo " <input id=\"$id\" type=\"number\" class=\"small-text srtads-validate\" name=\""
-            . esc_attr($this->get_field_name('sticky_top_padding'))
-            . '" step="1" min="0" value="';
-        echo empty($instance['sticky_top_padding']) ? 0 : $instance['sticky_top_padding'];
-        echo '"/>';
-        echo " <label for=\"$id\">";
-        esc_html_e('px top padding', 'srtads');
-        echo '</label>';
         echo '</p>';
         $responsiveTags = array_map(
             function () { return true; },
@@ -122,10 +104,6 @@ jQuery(function () {
     $('select[name$="[ad_tag]"]', widgetContentEl).on('change', function () {
         $responsiveCheckbox.prop('disabled', !responsiveTags[$(this).val()]);
     }).change();
-    var $stickyCheckbox = $('input[type=checkbox][name$="[sticky]"]', widgetContentEl);
-    $('input[name$="[sticky_top_padding]"]', widgetContentEl).on('input', function () {
-        $stickyCheckbox.prop('checked', true);
-    });
 });
 })();
 </script>
@@ -147,12 +125,6 @@ jQuery(function () {
         foreach (array_keys(self::REFRESH_OPTIONS) as $field) {
             $newInstance = self::sanitizeRefresh($field, $newInstance);
         }
-        $newInstance['sticky'] = !empty($newInstance['sticky']);
-        if (empty($newInstance['sticky_top_padding'])) {
-            $newInstance['sticky_top_padding'] = 0;
-        } else {
-            $newInstance['sticky_top_padding'] = max(0, intval($newInstance['sticky_top_padding']));
-        }
         return $newInstance;
     }
 
@@ -160,7 +132,7 @@ jQuery(function () {
         $value = $instance[$field];
         $id = esc_attr($this->get_field_id($field));
         echo "<label for=\"$id\" style=\"min-width: 11em; display: inline-block\">";
-        esc_html_e($label, 'srtads');
+        esc_html_e($label, 'sortable-ads');
         echo '</label>';
         echo "<select id=\"$id\" name=\"" . esc_attr($this->get_field_name($field)) . '" style="min-width: 7em">';
         foreach (self::REFRESH_OPTIONS[$field] as $optVal => $label) {
@@ -169,7 +141,7 @@ jQuery(function () {
                 echo ' selected';
             }
             echo '>';
-            esc_html_e($label, 'srtads');
+            esc_html_e($label, 'sortable-ads');
             echo '</option>';
         }
         echo '</select>';
@@ -184,7 +156,7 @@ jQuery(function () {
             echo " checked";
         }
         echo '/>';
-        esc_html_e($label, 'srtads');
+        esc_html_e($label, 'sortable-ads');
         echo '</label>';
     }
 

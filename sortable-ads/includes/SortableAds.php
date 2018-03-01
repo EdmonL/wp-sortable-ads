@@ -62,14 +62,6 @@ final class SortableAds {
     private static $adTagGroups;
     private static $adTagList;
 
-    public static function formatSize(array $size) {
-        return "$size[0]x$size[1]";
-    }
-
-    public static function formatSizes(array $sizes) {
-        return join(',', array_map([__CLASS__, 'formatSize'], $sizes));
-    }
-
     public static function groupedAdTags() {
         if (empty(self::$adTagGroups)) {
             $adTags = [];
@@ -85,12 +77,10 @@ final class SortableAds {
         if (empty(self::$adTagList)) {
             $adTags = [];
             foreach (SortableAds::AD_TAGS as $format => $tags) {
-                $group = self::adTagGroup($format, $tags);
                 $size = SortableAds::formatSize($tags['size']);
                 $responsive = !empty($tags['responsive_sizes']);
                 foreach ($tags['names'] as $name) {
                     $adTags[$name] = [
-                        'group' => $group,
                         'size' => $size,
                         'responsive' => $responsive
                     ];
@@ -104,7 +94,15 @@ final class SortableAds {
     private static function adTagGroup($format, array $formatData) {
         $responsive = (empty($formatData['responsive_sizes'])
             ? ''
-            : ' (mobile size ' . SortableAds::formatSizes($formatData['responsive_sizes']) . ')');
+            : ', ' . SortableAds::formatSizes($formatData['responsive_sizes']));
         return "$format - " . SortableAds::formatSize($formatData['size']) . $responsive;
+    }
+
+    private static function formatSize(array $size) {
+        return "$size[0]x$size[1]";
+    }
+
+    private static function formatSizes(array $sizes) {
+        return join(', ', array_map([__CLASS__, 'formatSize'], $sizes));
     }
 }

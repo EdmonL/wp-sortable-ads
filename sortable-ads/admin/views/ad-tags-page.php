@@ -6,20 +6,25 @@ if (!defined('SORTABLE_ADS')) {
 $adTags = [];
 foreach ($args['ad_tags'] as $name => $tag) {
     $tag['size'] = esc_attr($tag['size']);
-    $tag['group'] = __($tag['group'], 'srtads');
     $tag['name'] = esc_attr($name);
     $adTags[$name] = $tag;
 }
 $siteDomain = esc_attr(rawurlencode($args['site_domain']));
 ?>
 <div class="wrap srtads">
-    <h1><?= esc_html__(get_admin_page_title(), 'srtads') ?></h1>
+    <h1><?= esc_html__(get_admin_page_title(), 'sortable-ads') ?></h1>
+    <p><?= esc_html__('This page allows you to generate HTML code for ads using simple menus. When you create tags in this way you will need to copy and paste the HTML into the design of your website. You can also paste this HTML into the "Text" tab of posts and pages, or into other third party ad management plugins.', 'sortable-ads') ?></p>
+    <p><?= esc_html__('Using this method of creating tags is more advanced than the widget method.', 'sortable-ads') ?></p>
     <form id="srt_ad_tags_form"><?php do_settings_sections($args['page']); ?></form>
     <button id="srtads_copy_tag_html_code" class="button" style="margin-bottom: 4px; min-width: 16em">
-        <?= esc_html__('Copy HTML code to clipboard', 'srtads') ?>
+        <?= esc_html__('Copy HTML code to clipboard', 'sortable-ads') ?>
     </button>
+    <p class="description" id="srt_ad_tag_code_description">
+<?= esc_html__('This is the generated code that will serve an ad.  It is not recommended to edit this code before inserting it into your site.', 'sortable-ads') ?>
+    </p>
     <div class="stuffbox">
-        <pre id="srt_ad_tag_code" style="margin: 1em; overflow-x: auto; overflow-y: hidden"></pre>
+        <pre id="srt_ad_tag_code" style="margin: 1em; overflow-x: auto; overflow-y: hidden"
+             aria-describedby="srt_ad_tag_code_description"></pre>
     </div>
 </div>
 <script>
@@ -95,7 +100,6 @@ jQuery(function() {
         var tagName = data['selected_tag'];
         var tagData = adTags[tagName];
         if (currentData['selected_tag'] !== tagName) {
-            $('#srt_ad_tag_list_description').text(tagData['group']);
             $('#srt_ad_tag_responsive').prop('disabled', !tagData['responsive']);
         }
         $('#srt_ad_tag_code').text(tagCode(data));

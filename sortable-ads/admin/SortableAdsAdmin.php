@@ -12,7 +12,7 @@ final class SortableAdsAdmin {
 
     public function initSettings() {
         register_setting(
-            'srtads',
+            'sortable-ads',
             'srtads_settings',
             [
                 'default' => ['site_domain' => preg_replace('/^http:\\/\\/(www\\.)?/i', '', home_url('', 'http'), 1)],
@@ -22,7 +22,7 @@ final class SortableAdsAdmin {
         add_settings_section('srtads_default_section', null, null, 'srtads_settings_page');
         add_settings_field(
             'srtads_site_domain_field',
-            __('Site Domain', 'srtads'),
+            __('Site Domain', 'sortable-ads'),
             function () {
                 $this->renderView(
                     'site-domain-field',
@@ -40,7 +40,7 @@ final class SortableAdsAdmin {
         add_settings_section('srtads_default_section', null, null, 'srtads_ad_tags_page');
         add_settings_field(
             'srtads_ad_tag_list',
-            __('Ad Tag', 'srtads'),
+            __('Ad Tag', 'sortable-ads'),
             function () { $this->renderView('ad-tag-list', ['ad_tags' => SortableAds::groupedAdTags()]); },
             'srtads_ad_tags_page',
             'srtads_default_section',
@@ -48,7 +48,7 @@ final class SortableAdsAdmin {
         );
         add_settings_field(
             'srtads_ad_tag_responsive_attribute',
-            __('Responsive', 'srtads'),
+            __('Responsive', 'sortable-ads'),
             function () { $this->renderView('ad-tag-responsive-attribute'); },
             'srtads_ad_tags_page',
             'srtads_default_section',
@@ -56,14 +56,14 @@ final class SortableAdsAdmin {
         );
         add_settings_field(
             'srtads_ad_tag_refresh_attribute',
-            __('Refresh', 'srtads'),
+            __('Refresh', 'sortable-ads'),
             function () { $this->renderView('ad-tag-refresh-attribute'); },
             'srtads_ad_tags_page',
             'srtads_default_section'
         );
         add_settings_field(
             'srtads_ad_tag_sticky_attribute',
-            __('Siderbar Sticky', 'srtads'),
+            __('Siderbar Sticky', 'sortable-ads'),
             function () { $this->renderView('ad-tag-sticky-attribute'); },
             'srtads_ad_tags_page',
             'srtads_default_section',
@@ -79,10 +79,10 @@ final class SortableAdsAdmin {
                 'ad_tags' => SortableAds::adTagList()
             ]);
         };
-        $adTagsTitle = __('Sortable Ad Tags', 'srtads');
+        $adTagsTitle = __('Sortable Ad Tags', 'sortable-ads');
         add_menu_page(
             $adTagsTitle,
-            __('Sortable Ads', 'srtads'),
+            __('Sortable Ads', 'sortable-ads'),
             'read',
             'srtads_ad_tags_page',
             $renderAdTagsPage
@@ -90,23 +90,23 @@ final class SortableAdsAdmin {
         add_submenu_page(
             'srtads_ad_tags_page',
             $adTagsTitle,
-            __('Ad Tags', 'srtads'),
+            __('Ad Tags', 'sortable-ads'),
             'read',
             'srtads_ad_tags_page',
             $renderAdTagsPage
         );
         add_submenu_page(
             'srtads_ad_tags_page',
-            __('Sortable Ads Settings', 'srtads'),
-            __('Settings', 'srtads'),
+            __('Sortable Ads Settings', 'sortable-ads'),
+            __('Settings', 'sortable-ads'),
             'manage_options',
             'srtads_settings_page',
             function () { $this->renderView('settings-page', ['page' => 'srtads_settings_page']); }
         );
         add_submenu_page(
             'srtads_ad_tags_page',
-            __('Sortable Ads Help', 'srtads'),
-            __('Help', 'srtads'),
+            __('Sortable Ads Help', 'sortable-ads'),
+            __('Help', 'sortable-ads'),
             'read',
             'srtads_help_page',
             function () { $this->renderView('help-page'); }
@@ -138,7 +138,7 @@ final class SortableAdsAdmin {
         if (preg_match('/^[a-z]([-a-z0-9]*[a-z0-9])?(\\.[a-z]([-a-z0-9]*[a-z0-9])?)+$/i', $domain)) {
             $output['site_domain'] = $domain;
         } else {
-            add_settings_error('srtads_settings', 'invalid_site_domain', __('Please enter a valid site domain.', 'srtads'));
+            add_settings_error('srtads_settings', 'invalid_site_domain', __('Please enter a valid site domain.', 'sortable-ads'));
         }
         return $output;
     }

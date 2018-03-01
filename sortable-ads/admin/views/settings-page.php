@@ -8,7 +8,7 @@ settings_errors();
     <h1><?= esc_html(get_admin_page_title()) ?></h1>
     <form action="options.php" method="post">
 <?php
-settings_fields('srtads');
+settings_fields('sortable-ads');
 do_settings_sections($args['page']);
 submit_button();
 ?>
