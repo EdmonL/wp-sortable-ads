@@ -12,7 +12,7 @@ final class SortableAdsAdmin {
 
     public function initSettings() {
         $settings = get_option('srtads_settings');
-        if (!empty($settings)) {
+        if (empty($settings)) {
             add_option(
                 'srtads_settings',
                 ['site_domain' => preg_replace('/^http:\\/\\/(www\\.)?/i', '', home_url('', 'http'), 1)]
