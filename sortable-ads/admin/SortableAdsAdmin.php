@@ -11,13 +11,17 @@ final class SortableAdsAdmin {
     }
 
     public function initSettings() {
+        $settings = get_option('srtads_settings');
+        if (!empty($settings)) {
+            add_option(
+                'srtads_settings',
+                ['site_domain' => preg_replace('/^http:\\/\\/(www\\.)?/i', '', home_url('', 'http'), 1)]
+            );
+        }
         register_setting(
             'sortable-ads',
             'srtads_settings',
-            [
-                'default' => ['site_domain' => preg_replace('/^http:\\/\\/(www\\.)?/i', '', home_url('', 'http'), 1)],
-                'sanitize_callback' => __CLASS__ . '::sanitizeSettings'
-            ]
+            ['sanitize_callback' => __CLASS__ . '::sanitizeSettings']
         );
         add_settings_section('srtads_default_section', null, null, 'srtads_settings_page');
         add_settings_field(
